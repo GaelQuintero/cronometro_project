@@ -25,3 +25,7 @@ Estas instrucciones te guiarán en la configuración del proyecto en Android Stu
    Clona el proyecto en tu computadora:
    ```bash
    git clone https://github.com/tu_usuario/cronometro-android.git
+2. **Habilitar Hyper-v (Virtualización)**  
+   Habilita la virtualización si usas Windows para asi poder usar el emulador de la aplicación (Usar powershell)
+   ```bash
+   Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
