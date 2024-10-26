@@ -1,0 +1,29 @@
+# Configuración de Android Studio
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+
+# Archivos de compilación
+/build
+/captures
+.externalNativeBuild
+.cxx
+
+# Configuración específica del sistema operativo
+local.properties
+Thumbs.db
+*.DS_Store
+.idea/
+
+# Archivos de log y de entorno
+logs
+*.log
+.idea/libraries/
+.env
