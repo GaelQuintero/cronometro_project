@@ -4,10 +4,10 @@
     <solid android:color="#1882F4" />
 
     <!-- Bordes redondeados -->
-    <corners android:radius="20dp" />
+    <corners android:radius="100dp" />
 
     <!-- Borde opcional -->
     <stroke
         android:width="2dp"
-        android:color="#FFFFFF" />
+        android:color="#1882F4" />
 </shape>

@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.layout) // Asegúrate de que el nombre del layout sea correcto
+        setContentView(R.layout.layout) // Nombre del UI
 
         // Inicializa las vistas
         timerTextView = findViewById(R.id.timerTextView)
@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         stopButton = findViewById(R.id.stopButton)
         resetButton = findViewById(R.id.resetButton)
 
-        // Asigna los listeners a los botones
+        // listeners a los botones
         startButton.setOnClickListener { startTimer() }
         stopButton.setOnClickListener { stopTimer() }
         resetButton.setOnClickListener { resetTimer() }
