@@ -1,17 +1,7 @@
 package SH_U2.cronometro_project
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import SH_U2.cronometro_project.ui.theme.Cronometro_projectTheme
 import android.os.CountDownTimer
 import android.widget.Button
 import android.widget.TextView
@@ -43,10 +33,44 @@ class MainActivity : AppCompatActivity() {
         stopButton.setOnClickListener { stopTimer() }
         resetButton.setOnClickListener { resetTimer() }
     }
+    override fun onStop() {
+        super.onStop()
+        // Inicia el servicio en primer plano solo si no está en ejecución
+        val serviceIntent = Intent(this, TimerService::class.java)
+        startForegroundService(serviceIntent)
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        // Se detiene el servicio si el cronómetro se detiene
+        if (isRunning) {
+            val serviceIntent = Intent(this, TimerService::class.java)
+            stopService(serviceIntent)
+        }
+    }
+    fun stopTimerFromNotification() {
+        if (isRunning) {
+            isRunning = false
+            timer?.cancel()
+            updateTimerText() // Actualiza el texto del cronómetro
+        }
+    }
+    fun resetTimerFromNotification() {
+        isRunning = false // Detén el cronómetro
+        timeElapsed = 0L // Reinicia el tiempo
+        updateTimerText() // Actualiza el texto del cronómetro
+    }
+
+
 
     private fun startTimer() {
         if (!isRunning) {
             isRunning = true
+
+            // Pasa el tiempo transcurrido al servicio
+            val serviceIntent = Intent(this, TimerService::class.java)
+            serviceIntent.putExtra("elapsedTime", timeElapsed) // Enviar tiempo actual
+            startService(serviceIntent)
+
             timer = object : CountDownTimer(Long.MAX_VALUE, 1000) {
                 override fun onTick(millisUntilFinished: Long) {
                     timeElapsed++
@@ -60,10 +84,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
     private fun stopTimer() {
         if (isRunning) {
             isRunning = false
             timer?.cancel()
+            // Detiene el servicio cuando se detiene el cronómetro
+            stopService(Intent(this, TimerService::class.java))
         }
     }
 
@@ -81,3 +108,4 @@ class MainActivity : AppCompatActivity() {
         timerTextView.text = timeString
     }
 }
+

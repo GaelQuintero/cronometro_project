@@ -1,3 +1,6 @@
 <resources>
-    <string name="app_name">cronometro_project</string>
+    <string name="app_name">Cronómetro</string>
+    <string name="channel_name">Cronómetro</string>
+    <string name="channel_description">Notificaciones del cronómetro en ejecución</string>
+
 </resources>
