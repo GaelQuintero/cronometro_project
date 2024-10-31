@@ -1,11 +1,16 @@
 package SH_U2.cronometro_project
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,7 +25,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.layout) // Nombre del UI
+        setContentView(R.layout.layout)
+
+        // Solicita permiso de notificaciones en Android 13+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestNotificationPermission()
+        }
 
         // Inicializa las vistas
         timerTextView = findViewById(R.id.timerTextView)
@@ -33,42 +43,59 @@ class MainActivity : AppCompatActivity() {
         stopButton.setOnClickListener { stopTimer() }
         resetButton.setOnClickListener { resetTimer() }
     }
+
+    private fun requestNotificationPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // Detén el servicio cuando la app esté en primer plano
+        val serviceIntent = Intent(this, TimerService::class.java)
+        stopService(serviceIntent)
+    }
+
     override fun onStop() {
         super.onStop()
-        // Inicia el servicio en primer plano solo si no está en ejecución
-        val serviceIntent = Intent(this, TimerService::class.java)
-        startForegroundService(serviceIntent)
+        // Inicia el servicio solo si el cronómetro está en marcha y la app está en segundo plano
+        if (isRunning) {
+            val serviceIntent = Intent(this, TimerService::class.java)
+            serviceIntent.putExtra("elapsedTime", timeElapsed)
+            startForegroundService(serviceIntent)
+        }
     }
+
     override fun onDestroy() {
         super.onDestroy()
-        // Se detiene el servicio si el cronómetro se detiene
+        // Detiene el servicio si el cronómetro se detiene
         if (isRunning) {
             val serviceIntent = Intent(this, TimerService::class.java)
             stopService(serviceIntent)
         }
     }
+
     fun stopTimerFromNotification() {
         if (isRunning) {
             isRunning = false
             timer?.cancel()
-            updateTimerText() // Actualiza el texto del cronómetro
+            updateTimerText()
         }
     }
+
     fun resetTimerFromNotification() {
-        isRunning = false // Detén el cronómetro
-        timeElapsed = 0L // Reinicia el tiempo
-        updateTimerText() // Actualiza el texto del cronómetro
+        isRunning = false
+        timeElapsed = 0L
+        updateTimerText()
     }
-
-
 
     private fun startTimer() {
         if (!isRunning) {
             isRunning = true
 
-            // Pasa el tiempo transcurrido al servicio
             val serviceIntent = Intent(this, TimerService::class.java)
-            serviceIntent.putExtra("elapsedTime", timeElapsed) // Enviar tiempo actual
+            serviceIntent.putExtra("elapsedTime", timeElapsed)
             startService(serviceIntent)
 
             timer = object : CountDownTimer(Long.MAX_VALUE, 1000) {
@@ -77,19 +104,15 @@ class MainActivity : AppCompatActivity() {
                     updateTimerText()
                 }
 
-                override fun onFinish() {
-                    // No se llamará ya que usamos Long.MAX_VALUE
-                }
+                override fun onFinish() {}
             }.start()
         }
     }
-
 
     private fun stopTimer() {
         if (isRunning) {
             isRunning = false
             timer?.cancel()
-            // Detiene el servicio cuando se detiene el cronómetro
             stopService(Intent(this, TimerService::class.java))
         }
     }
@@ -108,4 +131,3 @@ class MainActivity : AppCompatActivity() {
         timerTextView.text = timeString
     }
 }
-

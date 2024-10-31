@@ -2,10 +2,10 @@ package SH_U2.cronometro_project.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+val DarkGray80 = Color(0xFFB0B0B0)       // Gris oscuro claro
+val Gray80 = Color(0xFFA0A0A0)            // Gris medio oscuro
+val LightGray80 = Color(0xFF8F8F8F)       // Gris claro oscuro
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+val DarkGray40 = Color(0xFF3A3A3A)       // Gris muy oscuro
+val Gray40 = Color(0xFF4B4B4B)           // Gris oscuro medio
+val LightGray40 = Color(0xFF5C5C5C)      // Gris oscuro suave

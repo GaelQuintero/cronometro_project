@@ -3,6 +3,7 @@ package SH_U2.cronometro_project
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.os.Build
@@ -24,46 +25,62 @@ class TimerService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // Si el servicio ya está en ejecución, no se reinicia el tiempo
         if (running) {
             return START_STICKY
         }
 
-        // Obtiene el tiempo transcurrido desde el intent (si está disponible)
         val elapsedTime = intent?.getLongExtra("elapsedTime", 0L) ?: 0L
-        startTime = SystemClock.elapsedRealtime() - (elapsedTime * 999) // Ajusta el tiempo
+        startTime = SystemClock.elapsedRealtime() - (elapsedTime * 1000)
 
         running = true
         val notification = createNotification()
         startForeground(NOTIFICATION_ID, notification)
 
-        // Inicia el hilo para actualizar la notificación
         Thread {
             while (running) {
                 val elapsedMillis = SystemClock.elapsedRealtime() - startTime
-                val seconds = (elapsedMillis / 999).toInt()
+                val seconds = (elapsedMillis / 1000).toInt()
 
-                // Actualiza la notificación en el hilo principal
                 Handler(Looper.getMainLooper()).post {
                     showNotification(seconds)
                 }
 
-                Thread.sleep(999) // Actualiza cada segundo
+                Thread.sleep(999)
             }
         }.start()
 
         return START_STICKY
     }
 
-
+    private fun formatTime(seconds: Int): String {
+        val hours = (seconds / 3600) % 60
+        val minutes = (seconds / 60) % 60
+        val secs = seconds % 60
+        return String.format("%02d:%02d:%02d", hours, minutes, secs)
+    }
 
     private fun showNotification(seconds: Int) {
+        val formattedTime = formatTime(seconds)
+
+        // Intentos para detener y reiniciar
+        val stopIntent = Intent(this, MainActivity::class.java).apply {
+            action = "ACTION_STOP"
+        }
+        val stopPendingIntent = PendingIntent.getActivity(this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
+        val resetIntent = Intent(this, MainActivity::class.java).apply {
+            action = "ACTION_RESET"
+        }
+        val resetPendingIntent = PendingIntent.getActivity(this, 0, resetIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_foreground) // icono
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Cronómetro en ejecución")
-            .setContentText("Tiempo: $seconds segundos")
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setOngoing(true) // Para que no se pueda despegar
+            .setContentText("Tiempo: $formattedTime")
+            .addAction(0, "Detener", stopPendingIntent)
+            .addAction(0, "Reiniciar", resetPendingIntent)
+            .setPriority(NotificationCompat.PRIORITY_LOW) // Notificación silenciosa
+            .setOngoing(true)
             .build()
 
         notificationManager.notify(NOTIFICATION_ID, notification)
@@ -71,23 +88,20 @@ class TimerService : Service() {
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Cronómetro"
-            val descriptionText = "Notificaciones del cronómetro"
-            val importance = NotificationManager.IMPORTANCE_HIGH
-            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
-                description = descriptionText
+            val channel = NotificationChannel(CHANNEL_ID, "Cronómetro", NotificationManager.IMPORTANCE_LOW).apply {
+                description = "Notificaciones del cronómetro"
+                setSound(null, null) // Notificación sin sonido
             }
-            // Registra el canal con el sistema
             notificationManager.createNotificationChannel(channel)
         }
     }
 
     private fun createNotification(): Notification {
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_foreground) // icono
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Cronómetro en ejecución")
-            .setContentText("Tiempo: 0 segundos") // El tiempo se actualizará en el bucle
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentText("Tiempo: 0 segundos")
+            .setPriority(NotificationCompat.PRIORITY_LOW)
             .setOngoing(true)
             .build()
     }
