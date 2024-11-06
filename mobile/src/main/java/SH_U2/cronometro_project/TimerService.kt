@@ -98,7 +98,7 @@ class TimerService : Service() {
 
     private fun createNotification(): Notification {
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setSmallIcon(R.drawable.ic_launcher)
             .setContentTitle("Cronómetro en ejecución")
             .setContentText("Tiempo: 0 segundos")
             .setPriority(NotificationCompat.PRIORITY_LOW)
