@@ -2,7 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-
+    <uses-permission android:name="com.example.myapp.permission.READ_DATA" />
+    <uses-permission android:name="com.example.myapp.permission.WRITE_DATA" />
     <uses-feature android:name="android.hardware.type.watch" />
 
     <application
@@ -10,7 +11,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@android:style/Theme.DeviceDefault">
+        android:theme="@style/AppTheme">
         <uses-library
             android:name="com.google.android.wearable"
             android:required="true" />
@@ -24,10 +25,10 @@
             android:value="true" />
 
         <activity
-            android:name=".presentation.MainActivityWear"
+            android:name=".MainActivityWear"
             android:exported="true"
             android:taskAffinity=""
-            android:theme="@style/MainActivityWearTheme.Starting">
+            android:theme="@style/Theme.AppCompat.Light">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

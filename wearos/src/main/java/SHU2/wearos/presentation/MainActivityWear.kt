@@ -1,73 +1,74 @@
-/* While this template provides a good starting point for using Wear Compose, you can always
- * take a look at https://github.com/android/wear-os-samples/tree/main/ComposeStarter and
- * https://github.com/android/wear-os-samples/tree/main/ComposeAdvanced to find the most up to date
- * changes to the libraries and their usages.
- */
+package SHU2.wearos
 
-package SHU2.wearos.presentation
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.Text
-import androidx.wear.compose.material.TimeText
-import androidx.wear.tooling.preview.devices.WearDevices
-import SHU2.wearos.R
-import SHU2.wearos.presentation.theme.Cronometro_projectTheme
+import android.util.Log
+import android.widget.TableLayout
+import android.widget.TableRow
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QueryDocumentSnapshot
+import com.google.firebase.firestore.QuerySnapshot
 
-class MainActivityWear : ComponentActivity() {
+class MainActivityWear : AppCompatActivity() {
+    private lateinit var firestore: FirebaseFirestore
+    private lateinit var lapTableLayout: TableLayout
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen()
-
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.layout_wear) // Asegúrate de que el nombre coincide con tu XML
 
-        setTheme(android.R.style.Theme_DeviceDefault)
+        firestore = FirebaseFirestore.getInstance()
+        lapTableLayout = findViewById(R.id.lapTableLayout)
 
-        setContent {
-            WearApp("Android")
-        }
+        loadLapData()
     }
-}
 
-@Composable
-fun WearApp(greetingName: String) {
-    Cronometro_projectTheme {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.background),
-            contentAlignment = Alignment.Center
-        ) {
-            TimeText()
-            Greeting(greetingName = greetingName)
-        }
+    private fun loadLapData() {
+        firestore.collection("vueltas")
+            .get()
+            .addOnSuccessListener { result: QuerySnapshot ->
+                for (document: QueryDocumentSnapshot in result) {
+                    val lapData = document.data
+                    val lapId = lapData["lapId"].toString()
+                    val lapTime = lapData["lapTime"].toString()
+                    val totalTime = lapData["totalTime"].toString()
+                    val deviceModel = lapData["deviceModel"].toString()
+
+                    val row = TableRow(this).apply {
+                        layoutParams = TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT)
+                    }
+
+                    val lapIdTextView = TextView(this).apply {
+                        text = lapId
+                        setPadding(10, 10, 10, 10)
+                    }
+                    row.addView(lapIdTextView)
+
+                    val lapTimeTextView = TextView(this).apply {
+                        text = lapTime
+                        setPadding(10, 10, 10, 10)
+                    }
+                    row.addView(lapTimeTextView)
+
+                    val totalTimeTextView = TextView(this).apply {
+                        text = totalTime
+                        setPadding(10, 10, 10, 10)
+                    }
+                    row.addView(totalTimeTextView)
+
+                    val deviceModelTextView = TextView(this).apply {
+                        text = deviceModel
+                        setPadding(10, 10, 10, 10)
+                    }
+                    row.addView(deviceModelTextView)
+
+                    lapTableLayout.addView(row)
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.w("Firestore", "Error obteniendo los documentos.", exception)
+            }
     }
-}
-
-@Composable
-fun Greeting(greetingName: String) {
-    Text(
-        modifier = Modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center,
-        color = MaterialTheme.colors.primary,
-        text = stringResource(R.string.hello_world, greetingName)
-    )
-}
-
-@Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
-@Composable
-fun DefaultPreview() {
-    WearApp("Preview Android")
 }
