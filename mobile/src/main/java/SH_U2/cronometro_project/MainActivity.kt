@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,6 +19,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var startButton: Button
     private lateinit var stopButton: Button
     private lateinit var resetButton: Button
+    private lateinit var firestore: FirebaseFirestore
 
     private var isRunning = false
     private var timeElapsed = 0L // tiempo en segundos
@@ -26,6 +28,13 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout)
+
+        // Inicializa Firebase Firestore
+        firestore = FirebaseFirestore.getInstance()
+
+        // Configura el botón de vueltas
+        val lapButton = findViewById<Button>(R.id.lapButton)
+        lapButton.setOnClickListener { saveLapTime() }
 
         // Solicita permiso de notificaciones en Android 13+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -52,14 +61,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        // Detén el servicio cuando la app esté en primer plano
         val serviceIntent = Intent(this, TimerService::class.java)
         stopService(serviceIntent)
     }
 
     override fun onStop() {
         super.onStop()
-        // Inicia el servicio solo si el cronómetro está en marcha y la app está en segundo plano
         if (isRunning) {
             val serviceIntent = Intent(this, TimerService::class.java)
             serviceIntent.putExtra("elapsedTime", timeElapsed)
@@ -69,7 +76,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        // Detiene el servicio si el cronómetro se detiene
         if (isRunning) {
             val serviceIntent = Intent(this, TimerService::class.java)
             stopService(serviceIntent)
@@ -129,5 +135,21 @@ class MainActivity : AppCompatActivity() {
         val seconds = timeElapsed % 60
         val timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds)
         timerTextView.text = timeString
+    }
+
+    private fun saveLapTime() {
+        val currentTime = System.currentTimeMillis() / 1000  // Ejemplo: tiempo en segundos
+        val lapData = hashMapOf(
+            "lapTime" to timeElapsed,
+            "timestamp" to currentTime
+        )
+
+        firestore.collection("laps").add(lapData)
+            .addOnSuccessListener {
+                // Notificación de éxito (puedes mostrar un mensaje de confirmación)
+            }
+            .addOnFailureListener {
+                // Manejo del error
+            }
     }
 }
