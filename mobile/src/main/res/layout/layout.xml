@@ -63,7 +63,7 @@
             android:layout_marginStart="10dp"
             android:background="@drawable/rounded_button_iniciar"
             android:textColor="@color/white"
-            android:text="Guardar vuelta" />
+            android:text="Vuelta" />
 
 
     </LinearLayout>
