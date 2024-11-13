@@ -56,6 +56,16 @@
             android:textColor="@color/white"
             android:text="Reiniciar" />
 
+        <Button
+            android:id="@+id/lapButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/rounded_button_iniciar"
+            android:textColor="@color/white"
+            android:text="Vuelta" />
+
+
     </LinearLayout>
 
 </LinearLayout>

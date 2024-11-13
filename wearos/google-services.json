@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "829677898338",
+    "project_id": "crometro-3897d",
+    "storage_bucket": "crometro-3897d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:829677898338:android:1d40ec7ce256e17eda5f3b",
+        "android_client_info": {
+          "package_name": "SHU2.wearos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvyUES7MqZc2HiN_504N7z9sPp32HmBpY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:829677898338:android:a9c401fe70c2e2e5da5f3b",
+        "android_client_info": {
+          "package_name": "SH_U2.cronometro_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvyUES7MqZc2HiN_504N7z9sPp32HmBpY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
