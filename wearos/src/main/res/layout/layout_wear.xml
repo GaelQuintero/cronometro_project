@@ -7,65 +7,65 @@
     android:gravity="center"
     android:orientation="vertical">
 
-    <!-- Tabla para mostrar las vueltas registradas -->
-    <TableLayout
-        android:id="@+id/lapTableLayout"
-        android:layout_width="match_parent"
+    <!-- ScrollView para hacer la tabla desplazable -->
+    <ScrollView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:stretchColumns="0,1,2,3"
-        android:shrinkColumns="0,1,2,3">
+        android:fillViewport="true">
 
-        <!-- Fila de encabezado -->
-        <TableRow
-            android:layout_width="match_parent"
+        <!-- Tabla para mostrar las vueltas registradas -->
+        <TableLayout
+            android:id="@+id/lapTableLayout"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp">
+            android:stretchColumns="0,1,2"
+            android:padding="8dp"
+            android:gravity="center">
 
-            <TextView
-                android:layout_width="0dp"
+            <!-- Fila de encabezado -->
+            <TableRow
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="V"
-                android:textColor="#FFFFFF"
-                android:textSize="8sp"
-                android:gravity="center"
-                android:padding="1dp" />
+                android:background="#1A1A1A"
+                android:padding="4dp"
+                android:gravity="center">
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="T"
-                android:textColor="#FFFFFF"
-                android:textSize="8sp"
-                android:gravity="center"
-                android:padding="1dp" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="2dp"
+                    android:text="Vuelta"
+                    android:textColor="#FFFFFF"
+                    android:textSize="5sp" />
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Tot"
-                android:textColor="#FFFFFF"
-                android:textSize="8sp"
-                android:gravity="center"
-                android:padding="1dp" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="2dp"
+                    android:text="Tiempo"
+                    android:textColor="#FFFFFF"
+                    android:textSize="5sp" />
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Disp"
-                android:textColor="#FFFFFF"
-                android:textSize="8sp"
-                android:gravity="center"
-                android:padding="1dp" />
-        </TableRow>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:padding="2dp"
+                    android:text="Total tiempo"
+                    android:textColor="#FFFFFF"
+                    android:textSize="5sp" />
 
-        <!-- Aquí se agregarán las filas de datos dinámicamente -->
+            </TableRow>
 
-    </TableLayout>
+            <!-- Aquí se agregarán las filas de datos dinámicamente -->
+
+        </TableLayout>
+
+    </ScrollView>
 
 </LinearLayout>
