@@ -8,8 +8,6 @@ import android.widget.TableRow
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QueryDocumentSnapshot
-import com.google.firebase.firestore.QuerySnapshot
 
 class MainActivityWear : AppCompatActivity() {
     private lateinit var firestore: FirebaseFirestore
@@ -22,19 +20,28 @@ class MainActivityWear : AppCompatActivity() {
         firestore = FirebaseFirestore.getInstance()
         lapTableLayout = findViewById(R.id.lapTableLayout)
 
-        loadLapData()
+        // Iniciamos el listener en tiempo real
+        loadLapDataRealTime()
     }
 
-    private fun loadLapData() {
+    private fun loadLapDataRealTime() {
         firestore.collection("vueltas")
-            .get()
-            .addOnSuccessListener { result: QuerySnapshot ->
-                for (document: QueryDocumentSnapshot in result) {
+            .addSnapshotListener { result, exception ->
+                if (exception != null) {
+                    Log.w("Firestore", "Error obteniendo los documentos.", exception)
+                    return@addSnapshotListener
+                }
+
+                // Limpiar las filas actuales en la vista antes de agregar nuevas
+                lapTableLayout.removeAllViews()
+
+                // Si la consulta fue exitosa, mostramos los datos de las vueltas
+                result?.forEach { document ->
                     val lapData = document.data
                     val lapId = lapData["lapId"].toString()
                     val lapTime = lapData["lapTime"].toString()
                     val totalTime = lapData["totalTime"].toString()
-                    val deviceModel = lapData["deviceModel"].toString()
+
 
                     val row = TableRow(this).apply {
                         layoutParams = TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT)
@@ -58,17 +65,11 @@ class MainActivityWear : AppCompatActivity() {
                     }
                     row.addView(totalTimeTextView)
 
-                    val deviceModelTextView = TextView(this).apply {
-                        text = deviceModel
-                        setPadding(10, 10, 10, 10)
-                    }
-                    row.addView(deviceModelTextView)
 
+
+                    // Añadir la fila a la tabla
                     lapTableLayout.addView(row)
                 }
-            }
-            .addOnFailureListener { exception ->
-                Log.w("Firestore", "Error obteniendo los documentos.", exception)
             }
     }
 }
