@@ -1,7 +1,10 @@
 <resources>
+
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        >>>>>>> ff888a9a5d48aee6241bb2b6f5fd3bbf69ce3ab1
         <!-- Aquí eliminamos la ActionBar -->
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-</resources>
+
+    </resources>
